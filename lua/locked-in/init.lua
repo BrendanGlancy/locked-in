@@ -30,7 +30,7 @@ end
 function M.start_session()
     print("Starting session...")
     M.config.session_start_time = os.time()
-    M.config.focus_score = 50
+    M.config.focus_score = 100
     M.config.distraction_count = 0
     M.config.productivity_streak = 0
 
@@ -75,8 +75,10 @@ function M.boost_focus(amount)
 end
 
 function M.reduce_focus(amount)
-    print("Reducing focus...")
+    print("YOU LOCKED OUT")
+    vim.notify("You locked out of the session. Focus score reduced by " .. (amount or 5))
 
+    -- we need to update this to account for the focus starting at 100 instead of 50
     M.config.focus_score = math.max(0, M.config.focus_score - (amount or 5))
     M.config.distraction_count = M.config.distraction_count + 1
     ui.update()

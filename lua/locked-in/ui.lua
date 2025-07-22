@@ -93,9 +93,18 @@ function M.update()
 
     local bar_start = lines[2]:find("[█░]")
     if bar_start then
-        local filled_end = bar_start + lines[2]:sub(bar_start):find("░") - 2
-        if filled_end >= bar_start then
-            vim.api.nvim_buf_add_highlight(buf_id, -1, "LockedInBarFill", 1, bar_start - 1, filled_end)
+        local empty_start = lines[2]:sub(bar_start):find("░")
+        if empty_start then
+            local filled_end = bar_start + empty_start - 2
+            if filled_end >= bar_start then
+                vim.api.nvim_buf_add_highlight(buf_id, -1, "LockedInBarFill", 1, bar_start - 1, filled_end)
+            end
+        else
+            -- Progress bar is completely filled
+            local bar_end = lines[2]:find("]")
+            if bar_end then
+                vim.api.nvim_buf_add_highlight(buf_id, -1, "LockedInBarFill", 1, bar_start - 1, bar_end - 1)
+            end
         end
     end
 end

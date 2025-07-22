@@ -8,18 +8,27 @@ if vim.g.loaded_locked_in then
 end
 vim.g.loaded_locked_in = true
 
+-- Lazy load the module
+local locked_in = nil
+local function get_locked_in()
+    if not locked_in then
+        locked_in = require("locked-in")
+    end
+    return locked_in
+end
+
 vim.api.nvim_create_user_command("LockedIn", function(args)
+    local li = get_locked_in()
     if args.args == "start" then
-        require("locked-in").start_session()
+        li.start_session()
     elseif args.args == "stop" then
-        require("locked-in").end_session()
+        li.end_session()
     elseif args.args == "toggle" then
-        require("locked-in").toggle()
+        li.toggle()
     elseif args.args == "status" then
-        local status, _ = require("locked-in").get_status()
-        local config = require("locked-in").config
+        local status = li.get_status()
         vim.notify(string.format("Status: %s | Score: %d | Streak: %d",
-            status, config.focus_score, config.productivity_streak))
+            status, li.config.focus_score, li.config.productivity_streak))
     else
         vim.notify("Usage: :LockedIn {start|stop|toggle|status}")
     end
@@ -31,15 +40,12 @@ end, {
 })
 
 vim.api.nvim_create_user_command("LockedInBoost", function()
-    print("somehow we got to a lockin boost")
-
-    require("locked-in").boost_focus()
+    get_locked_in().boost_focus()
     vim.notify("Focus boosted! Keep it up!")
 end, {})
 
 vim.api.nvim_create_user_command("LockedInDistracted", function()
-    print("somehow we got to a lockin distracted")
-
-    require("locked-in").reduce_focus()
-    vim.notify("Stay focused! Get back on track.")
+    -- This is how we track when you're getting distracted - manually call :LockedInDistracted
+    -- when you catch yourself losing focus (e.g. browsing social media, checking messages, etc.)
+    get_locked_in().reduce_focus()
 end, {})
