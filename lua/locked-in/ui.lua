@@ -49,8 +49,8 @@ local function create_window()
         width = width,
         height = height,
         style = "minimal",
-        border = "rounded",
-        focusable = false,
+        -- border = "rounded",
+        -- focusable = false,
         zindex = 50,
     })
 
